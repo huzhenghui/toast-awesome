@@ -1,0 +1,74 @@
+image: ubuntu
+
+default: toast-list
+
+tasks:
+
+  toast-list:
+    description: toast --list
+    dependencies:
+      - install-toast
+    cache: false
+    input_paths:
+      - toast.yml
+    command: |
+      echo 'toast --list'
+      toast --list
+
+  toast-tasks:
+    description: toast tasks list
+    dependencies:
+      - install-toast
+      - install-gawk
+    cache: false
+    input_paths:
+      - toast.yml
+    command: |
+      toast --list |
+        gawk '{print gensub(/^* [`]?([^` ]*)[`]?(.*)/, "\\1\\2", "g");}'
+
+  install-toast:
+    description: install toast
+    dependencies:
+      - install-curl
+    command: |
+      echo 'install toast'
+      curl https://raw.githubusercontent.com/stepchowfun/toast/master/install.sh -LSfs | sh
+
+  install-curl:
+    description: install curl
+    command: |
+      echo 'install curl'
+      apt-get update
+      apt-get install --yes curl
+
+  install-gawk:
+    description: install gawk
+    command: |
+      echo 'install gawk'
+      apt-get update
+      apt-get install --yes gawk
+
+  just-evaluate:
+    description: just --evaluate
+    output_paths:
+      - output/output.sh
+    command: |
+      mkdir output
+      echo 'just just-evaluate' > output/output.sh  
+
+  just-draft-dir:
+    description: echo "{{draft_dir}}"
+    output_paths:
+      - output/output.sh
+    command: |
+      mkdir output
+      echo 'just just-draft-dir' > output/output.sh  
+
+  code:
+    description: code '{{code_workspace}}'
+    output_paths:
+      - output/output.sh
+    command: |
+      mkdir output
+      echo 'just code' > output/output.sh  
